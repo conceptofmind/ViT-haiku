@@ -7,7 +7,6 @@ import jax
 from jax import random, nn
 
 import jax.numpy as jnp
-from jax.numpy import einsum
 
 from einops import rearrange, repeat
 
@@ -29,7 +28,7 @@ class PreNorm(hk.Module):
     def __init__(self, fn):
         super(PreNorm, self).__init__()
         self.norm = LayerNorm()
-        self. fn = fn
+        self.fn = fn
     def __call__(self, x, **kwargs):
         return self.fn(self.norm(x), **kwargs)
 
@@ -109,10 +108,7 @@ class VitBase(hk.Module):
         num_patches = (image_height // patch_height) * (image_width // patch_width)
         assert pool in {'cls', 'mean'}, 'pool type must be either cls (cls token) or mean (mean pooling)'
 
-        self.to_patch_embedding = hk.Sequential([
-            
-            hk.Linear(dim)
-        ])
+        self.to_patch_embedding = hk.Linear(dim)
 
         self.pos_embedding = hk.get_parameter('pos_embedding', shape = [1, num_patches + 1, dim], init = jnp.zeros)
         self.cls_token = hk.get_parameter('cls_token', shape = [1, 1, dim], init = jnp.zeros)
